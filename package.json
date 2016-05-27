@@ -1,6 +1,6 @@
 {
   "name": "ws-rpc-client",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A Promise-based RPC subprotocol for WebSockets",
   "main": "dist/index.js",
   "files": [
