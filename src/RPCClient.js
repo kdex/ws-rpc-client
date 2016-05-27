@@ -103,7 +103,6 @@ export class RPCClient extends EventEmitter {
 			args,
 			id
 		});
-		console.log(message);
 		try {
 			if (message.payload.instruction === MESSAGE_ACKNOWLEDGEMENT || message.payload.instruction === MESSAGE_REPLY) {
 				/* Reply to a reply */
