@@ -49,8 +49,8 @@ export class RPCClient extends EventEmitter {
 		this[extensions].socket = socket;
 		for (let event of ["close", "error", "message", "open"]) {
 			let name = `on${event}`;
-			if (event === "message") {
-				this[extensions].socket[name] = e => {
+			this[extensions].socket[name] = e => {
+				if (event === "message") {
 					if (JSON.parse(e.data).payload.instruction === MESSAGE_ACKNOWLEDGEMENT) {
 						return;
 					}
@@ -58,13 +58,13 @@ export class RPCClient extends EventEmitter {
 						originalEvent: e,
 						data: e.data
 					});
-				};
-			}
-			else {
-				this.emit(event, {
-					originalEvent: e
-				});
-			}
+				}
+				else {
+					this.emit(event, {
+						originalEvent: e
+					});
+				}
+			};
 		}
 	}
 	createMessage({
