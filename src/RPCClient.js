@@ -1,11 +1,13 @@
 import EventEmitter from "crystal-event-emitter";
+import uuid from "uuid";
 const extensions = Symbol("[[Extensions]]");
 const MESSAGE_REPLY = 0;
 const MESSAGE_ACKNOWLEDGEMENT = 1;
 class Message {
-	static currentID = 0;
+	static currentID = uuid.v4();
 	constructor(payload, id) {
-		this.id = id !== undefined ? id : Message.currentID++;
+		this.id = id !== undefined ? id : Message.currentID;
+		Message.currentID = uuid.v4();
 		this.payload = payload;
 	}
 }
@@ -40,7 +42,7 @@ function cancel(resolver, time = 0) {
 }
 export class RPCClient extends EventEmitter {
 	constructor(socket, options = {
-		timeout: 1000
+		timeout: 1500
 	}) {
 		super({
 			inferListeners: true
