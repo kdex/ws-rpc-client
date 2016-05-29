@@ -6,9 +6,9 @@ process.env.FORCE_COLOR = true;
 gulp.task("js", () => {
 	return gulp.src("src/**/*.js")
 		.pipe(babel())
-// 		.pipe(uglify({
-// 			mangle: true
-// 		}))
+		.pipe(uglify({
+			mangle: true
+		}))
 		.pipe(gulp.dest("dist"));
 });
 gulp.task("default", () => {
