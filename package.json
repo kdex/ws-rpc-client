@@ -18,7 +18,9 @@
     "rpc",
     "esnext",
     "es6",
+    "es2015",
     "es7",
+    "es2016",
     "modern"
   ],
   "scripts": {
