@@ -82,10 +82,15 @@ export class RPCClient extends EventEmitter {
 	readMessage(text, fire = true) {
 		const messageData = JSON.parse(text);
 		const message = new Message(messageData.payload, messageData.id);
+		const instruction = message.payload.instruction;
 		message.reply = async (...args) => {
 			let newInstruction = MESSAGE_REPLY;
-			if (message.payload.instruction === newInstruction) {
+			if (instruction === newInstruction) {
 				newInstruction = MESSAGE_ACKNOWLEDGEMENT;
+			}
+			if (instruction === MESSAGE_ACKNOWLEDGEMENT) {
+				/* Acknowledgement messages should not trigger further traffic */
+				return null;
 			}
 			return await this.send({
 				args,
@@ -97,10 +102,8 @@ export class RPCClient extends EventEmitter {
 		if (fire) {
 			this.emit(message.id, message);
 		}
-		if (message.id !== message.payload.instruction) {
-			if (message.payload.instruction !== MESSAGE_ACKNOWLEDGEMENT && message.payload.instruction !== MESSAGE_REPLY) {
-				this.emit(message.payload.instruction, message);
-			}
+		if (instruction !== MESSAGE_ACKNOWLEDGEMENT && instruction !== MESSAGE_REPLY) {
+			this.emit(instruction, message);
 		}
 		return message;
 	}
@@ -126,15 +129,10 @@ export class RPCClient extends EventEmitter {
 				const listener = (...args) => {
 					this.off(message.id, listener);
 					resolve(...args);
-					const reply = args[0];
+					const [reply] = args;
 					reply.reply();
-// 					const replyListener = () => {
-// 						resolve();
-// 						this.off(message.id, replyListener);
-// 					};
-// 					this.on(message.id, replyListener);
 				};
-				this.on(message.id, listener);;
+				this.on(message.id, listener);
 				const serialization = JSON.stringify(message);
 				this[extensions].socket.send(serialization);
 			}, timeout);
