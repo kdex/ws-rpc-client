@@ -87,7 +87,12 @@ export class RPCClient extends EventEmitter {
 			if (message.payload.instruction === newInstruction) {
 				newInstruction = MESSAGE_ACKNOWLEDGEMENT;
 			}
-			return await this.send(newInstruction, message.id, ...args);
+			return await this.send({
+				args,
+				id: message.id,
+				instruction: newInstruction,
+				timeout: this[extensions].timeout
+			});
 		};
 		if (fire) {
 			this.emit(message.id, message);
@@ -99,7 +104,12 @@ export class RPCClient extends EventEmitter {
 		}
 		return message;
 	}
-	async send(instruction, id, ...args) {
+	async send({
+		args,
+		id,
+		instruction,
+		timeout = this[extensions].timeout
+	} = {}) {
 		const message = this.createMessage({
 			instruction,
 			args,
@@ -127,7 +137,7 @@ export class RPCClient extends EventEmitter {
 				this.on(message.id, listener);;
 				const serialization = JSON.stringify(message);
 				this[extensions].socket.send(serialization);
-			}, this[extensions].timeout);
+			}, timeout);
 			return response;
 		}
 		catch (e) {
