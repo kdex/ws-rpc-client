@@ -1,8 +1,9 @@
 import EventEmitter from "crystal-event-emitter";
 import uuid from "uuid";
+export { ANY } from "crystal-event-emitter";
+export const MESSAGE_REPLY = 0;
+export const MESSAGE_ACKNOWLEDGEMENT = 1;
 const extensions = Symbol("[[Extensions]]");
-const MESSAGE_REPLY = 0;
-const MESSAGE_ACKNOWLEDGEMENT = 1;
 class Message {
 	static currentID = uuid.v4();
 	constructor(payload, id) {
@@ -56,10 +57,14 @@ export class RPCClient extends EventEmitter {
 					if (JSON.parse(e.data).payload.instruction === MESSAGE_ACKNOWLEDGEMENT) {
 						return;
 					}
+					const message = this.readMessage(e.data);
+					/* Emit raw event */
 					this.emit(event, {
 						originalEvent: e,
-						data: e.data
+						data: message
 					});
+					/* Emit specialized event */
+					this.emit(message.payload.instruction, message);
 				}
 				else {
 					this.emit(event, {
@@ -101,9 +106,6 @@ export class RPCClient extends EventEmitter {
 		};
 		if (fire) {
 			this.emit(message.id, message);
-		}
-		if (instruction !== MESSAGE_ACKNOWLEDGEMENT && instruction !== MESSAGE_REPLY) {
-			this.emit(instruction, message);
 		}
 		return message;
 	}
