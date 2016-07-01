@@ -1,6 +1,8 @@
-import EventEmitter from "crystal-event-emitter";
+import {
+	default as EventEmitter,
+	ANY
+} from "crystal-event-emitter";
 import uuid from "uuid";
-export { ANY } from "crystal-event-emitter";
 export const MESSAGE_REPLY = 0;
 export const MESSAGE_ACKNOWLEDGEMENT = 1;
 const extensions = Symbol("[[Extensions]]");
@@ -67,6 +69,11 @@ export class RPCClient extends EventEmitter {
 					this.emit(message.payload.instruction, message);
 				}
 				else {
+					if (event === "close") {
+						/* Stop all listeners */
+						this.off(ANY);
+						this[extensions].socket = null;
+					}
 					this.emit(event, {
 						originalEvent: e
 					});
