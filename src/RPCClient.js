@@ -52,10 +52,10 @@ export class RPCClient extends EventEmitter {
 			inferListeners: true
 		});
 		this[extensions] = options;
-		this[extensions].socket = socket;
+		this.rawSocket = socket;
 		for (let event of ["close", "error", "message", "open"]) {
 			let name = `on${event}`;
-			this[extensions].socket[name] = e => {
+			this.rawSocket[name] = e => {
 				if (event === "message") {
 					if (JSON.parse(e.data).payload.instruction === MESSAGE_ACKNOWLEDGEMENT) {
 						return;
@@ -127,7 +127,7 @@ export class RPCClient extends EventEmitter {
 			if (message.payload.instruction === MESSAGE_ACKNOWLEDGEMENT || message.payload.instruction === MESSAGE_REPLY) {
 				/* Reply to a reply */
 				const serialization = JSON.stringify(message);
-				this[extensions].socket.send(serialization);
+				this.rawSocket.send(serialization);
 				return null;
 			}
 			const response = await cancel((resolve, reject) => {
@@ -139,7 +139,7 @@ export class RPCClient extends EventEmitter {
 				};
 				this.on(message.id, listener);
 				const serialization = JSON.stringify(message);
-				this[extensions].socket.send(serialization);
+				this.rawSocket.send(serialization);
 			}, timeout);
 			return response;
 		}
