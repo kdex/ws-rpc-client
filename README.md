@@ -3,18 +3,18 @@
 ## API reference
 #### RPC.prototype.readMessage(text, fire = true)
 Reads a serialized incoming message containing `text` and fires an event if `fire` is truthy. Reading a message means that the RPCClient may automatically reply with `MESSAGE_ACKNOWLEDGEMENT` so that the `Promise` on the other side resolves.
-- text
+- `text`
 	The serialized `Message` object to read
-- fire
+- `fire`
 	If truthy, fires an event of `message.id`
 
 #### RPC.prototype.send(payload)
 Sends a message containing `payload` in order to execute a remote method
-- payload.instruction
+- `payload.instruction`
 	The instruction to invoke on the remote target
-- payload.args
+- `payload.args`
 	The arguments that should be provided
-- payload.timeout
+- `payload.timeout`
 	The timeout that should be used for declaring the message transmission as failed. If not provided, the default timeout is used.
-- payload.id
+- `payload.id`
 	A unique ID to tell messages apart; if not provided, a random UUID is used.
