@@ -82,9 +82,14 @@ export class RPCClient extends EventEmitter {
 		args = [],
 		id
 	} = {}) {
+		/* The argument list should always be iterable */
+		let argumentList = args;
+		if (!Array.isArray(args)) {
+			argumentList = [args];
+		}
 		return new Message({
 			instruction,
-			args
+			args: argumentList
 		}, id);
 	}
 	readMessage(text, fire = true) {
