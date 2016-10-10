@@ -3,6 +3,7 @@
   "version": "2.1.7",
   "description": "A Promise-based RPC subprotocol for WebSockets",
   "main": "dist/index.js",
+  "repository": "kdex/ws-rpc-client",
   "files": [
     "dist/*"
   ],
