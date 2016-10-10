@@ -1,7 +1,4 @@
-import {
-	default as EventEmitter,
-	ANY
-} from "crystal-event-emitter";
+import EventEmitter, { ANY } from "crystal-event-emitter";
 export { ANY };
 import uuid from "uuid";
 export const MESSAGE_REPLY = 0;
@@ -53,26 +50,24 @@ export class RPCClient extends EventEmitter {
 		});
 		this[extensions] = options;
 		this.rawSocket = socket;
-		for (let event of ["close", "error", "message", "open"]) {
-			let name = `on${event}`;
+		for (const event of ["close", "error", "message", "open"]) {
+			const name = `on${event}`;
 			this.rawSocket[name] = e => {
 				if (event === "message") {
 					if (JSON.parse(e.data).payload.instruction === MESSAGE_ACKNOWLEDGEMENT) {
 						return;
 					}
+					/* Emit specialized event by reading message */
 					const message = this.readMessage(e.data);
 					/* Emit raw event */
 					this.emit(event, {
+						data: message,
 						originalEvent: e,
-						data: message
+						raw: true
 					});
-					/* Emit specialized event */
-					this.emit(message.payload.instruction, message);
 				}
 				else {
-					this.emit(event, {
-						originalEvent: e
-					});
+					this.emit(event, e);
 				}
 			};
 		}
@@ -113,7 +108,9 @@ export class RPCClient extends EventEmitter {
 			});
 		};
 		if (fire) {
-			this.emit(message.id, message);
+			this.emit(message.id, {
+				data: message
+			});
 		}
 		return message;
 	}
@@ -152,5 +149,5 @@ export class RPCClient extends EventEmitter {
 			throw new Error(`Timeout: Failed to send message ${JSON.stringify(message)}.`);
 		}
 	}
-};
+}
 export default RPCClient;
