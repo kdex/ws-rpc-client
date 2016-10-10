@@ -1,6 +1,6 @@
 {
   "name": "ws-rpc-client",
-  "version": "2.1.7",
+  "version": "2.1.8",
   "description": "A Promise-based RPC subprotocol for WebSockets",
   "main": "dist/index.js",
   "repository": "kdex/ws-rpc-client",
