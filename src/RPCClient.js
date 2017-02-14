@@ -67,6 +67,7 @@ export class RPCClient extends EventEmitter {
 					});
 				}
 				else {
+					/* "close" event, etc. */
 					this.emit(event, e);
 				}
 			};
@@ -90,7 +91,7 @@ export class RPCClient extends EventEmitter {
 	readMessage(text, fire = true) {
 		const messageData = JSON.parse(text);
 		const message = new Message(messageData.payload, messageData.id);
-		const instruction = message.payload.instruction;
+		const { instruction } = message.payload;
 		message.reply = async (...args) => {
 			let newInstruction = MESSAGE_REPLY;
 			if (instruction === newInstruction) {
