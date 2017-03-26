@@ -1,3 +1,6 @@
+# Project moved
+This project has moved [here](https://github.com/kdex/ws-promise). This repository is deprecated.
+
 # ws-rpc-client
 `ws-rpc-client` is a tiny WebSocket subprotocol that builds a request-response model onto HTML5 WebSockets using ES2015 Promises. You can use this with ES2017's `await`/`async` to simplify your WebSocket API. `ws-rpc-client` supports `node.js` and browsers. For more flexibility, please see [kdex/ws-promise-server](https://github.com/kdex/ws-promise-server) and [kdex/ws-promise-client](https://github.com/kdex/ws-promise-client), the official server and client based on this subprotocol.
 ## API reference
